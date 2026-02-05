@@ -1,13 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { User, LogOut, Package, Heart, Users, Ticket } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/context/LanguageContext";
+import AuthModal from "@/components/auth/AuthModal";
 
 export default function UserMenu() {
   const { user, logout } = useAuth();
   const { locale } = useLanguage();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
 
   const loginText = {
     ru: "Войти",
@@ -53,15 +57,28 @@ export default function UserMenu() {
     },
   ];
 
+  const openLogin = () => {
+    setAuthMode("login");
+    setIsAuthModalOpen(true);
+  };
+
   if (!user) {
     return (
-      <Link
-        href="/login"
-        className="flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-gray-800"
-      >
-        <User className="h-4 w-4" />
-        <span className="hidden sm:inline">{loginText[locale]}</span>
-      </Link>
+      <>
+        <button
+          onClick={openLogin}
+          className="flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-gray-800"
+        >
+          <User className="h-4 w-4" />
+          <span className="hidden sm:inline">{loginText[locale]}</span>
+        </button>
+
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          initialMode={authMode}
+        />
+      </>
     );
   }
 

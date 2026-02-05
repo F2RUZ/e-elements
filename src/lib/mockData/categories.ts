@@ -1,0 +1,196 @@
+// src/lib/mockData/categories.ts
+
+import { Category } from "@/types/category";
+
+export const mockCategories: Category[] = [
+  {
+    id: "1",
+    name: {
+      uz: "Og'riq qoldiruvchilar",
+      ru: "Обезболивающие",
+      en: "Pain Relievers",
+    },
+    slug: "pain-relievers",
+    description: {
+      uz: "Og'riq va yallig'lanishni bartaraf etuvchi dorilar",
+      ru: "Препараты от боли и воспаления",
+      en: "Pain and inflammation relief medications",
+    },
+    icon: "💊",
+    image: "/images/categories/pain-relievers.jpg",
+    color: "#8B5CF6", // Purple
+    productCount: 45,
+    featured: true,
+  },
+  {
+    id: "2",
+    name: {
+      uz: "Vitaminlar va minerallar",
+      ru: "Витамины и минералы",
+      en: "Vitamins & Minerals",
+    },
+    slug: "vitamins",
+    description: {
+      uz: "Organizm uchun zarur vitaminlar va mikroelementlar",
+      ru: "Необходимые витамины и микроэлементы для организма",
+      en: "Essential vitamins and microelements for the body",
+    },
+    icon: "🌿",
+    image: "/images/categories/vitamins.jpg",
+    color: "#10B981", // Emerald
+    productCount: 128,
+    featured: true,
+  },
+  {
+    id: "3",
+    name: {
+      uz: "Yurak-qon tomir",
+      ru: "Сердечно-сосудистые",
+      en: "Cardiovascular",
+    },
+    slug: "cardiovascular",
+    description: {
+      uz: "Yurak va qon tomir tizimi uchun dorilar",
+      ru: "Препараты для сердца и сосудов",
+      en: "Heart and vascular system medications",
+    },
+    icon: "❤️",
+    image: "/images/categories/cardiovascular.jpg",
+    color: "#EF4444",
+    productCount: 67,
+    featured: true,
+  },
+  {
+    id: "4",
+    name: {
+      uz: "Hazm tizimi",
+      ru: "Пищеварительная система",
+      en: "Digestive System",
+    },
+    slug: "digestive",
+    description: {
+      uz: "Hazm tizimi muammolari uchun dorilar",
+      ru: "Препараты для проблем пищеварения",
+      en: "Digestive system problem medications",
+    },
+    icon: "🫁",
+    image: "/images/categories/digestive.jpg",
+    color: "#F59E0B",
+    productCount: 89,
+    featured: true,
+  },
+  {
+    id: "5",
+    name: {
+      uz: "Shamollash va gripp",
+      ru: "Простуда и грипп",
+      en: "Cold & Flu",
+    },
+    slug: "cold-flu",
+    description: {
+      uz: "Shamollash va gripp belgilariga qarshi dorilar",
+      ru: "Препараты против симптомов простуды и гриппа",
+      en: "Cold and flu symptom relief medications",
+    },
+    icon: "🤧",
+    image: "/images/categories/cold-flu.jpg",
+    color: "#8B5CF6",
+    productCount: 56,
+    featured: true,
+  },
+  {
+    id: "6",
+    name: {
+      uz: "Go'zallik va parvarish",
+      ru: "Красота и уход",
+      en: "Beauty & Care",
+    },
+    slug: "beauty",
+    description: {
+      uz: "Teri, soch va tana parvarishi vositalari",
+      ru: "Средства для ухода за кожей, волосами и телом",
+      en: "Skin, hair and body care products",
+    },
+    icon: "✨",
+    image: "/images/categories/beauty.jpg",
+    color: "#EC4899",
+    productCount: 134,
+    featured: true,
+  },
+  {
+    id: "7",
+    name: {
+      uz: "Ona va bola",
+      ru: "Мама и малыш",
+      en: "Mother & Baby",
+    },
+    slug: "mother-baby",
+    description: {
+      uz: "Homilador ayollar va bolalar uchun maxsulotlar",
+      ru: "Продукты для беременных и детей",
+      en: "Products for pregnant women and children",
+    },
+    icon: "👶",
+    image: "/images/categories/mother-baby.jpg",
+    color: "#06B6D4",
+    productCount: 98,
+    featured: true,
+  },
+  {
+    id: "8",
+    name: {
+      uz: "Tibbiy asboblar",
+      ru: "Медицинские приборы",
+      en: "Medical Devices",
+    },
+    slug: "medical-devices",
+    description: {
+      uz: "Tibbiy asbob va jihozlar",
+      ru: "Медицинские аппараты и приборы",
+      en: "Medical equipment and devices",
+    },
+    icon: "🩺",
+    image: "/images/categories/medical-devices.jpg",
+    color: "#14B8A6",
+    productCount: 42,
+    featured: false,
+  },
+  {
+    id: "9",
+    name: {
+      uz: "Allergia",
+      ru: "Аллергия",
+      en: "Allergy",
+    },
+    slug: "allergy",
+    description: {
+      uz: "Allergiya belgilariga qarshi dorilar",
+      ru: "Препараты против симптомов аллергии",
+      en: "Allergy symptom relief medications",
+    },
+    icon: "🤧",
+    image: "/images/categories/allergy.jpg",
+    color: "#A855F7",
+    productCount: 38,
+    featured: false,
+  },
+  {
+    id: "10",
+    name: {
+      uz: "Immunitet",
+      ru: "Иммунитет",
+      en: "Immunity",
+    },
+    slug: "immunity",
+    description: {
+      uz: "Immunitetni mustahkamlash uchun vositalar",
+      ru: "Средства для укрепления иммунитета",
+      en: "Immunity boosting products",
+    },
+    icon: "🛡️",
+    image: "/images/categories/immunity.jpg",
+    color: "#22C55E",
+    productCount: 76,
+    featured: true,
+  },
+];
