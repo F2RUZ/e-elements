@@ -1,401 +1,303 @@
-// src/app/(shop)/cart/page.tsx
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
+import { useCart } from "@/hooks/useCart";
 import { useLanguage } from "@/context/LanguageContext";
-import { CartItem } from "@/types/cart";
-
-// Mock cart data
-const mockCartItems: CartItem[] = [
-  {
-    id: "1",
-    productId: "1",
-    name: {
-      uz: "Paracetamol 500mg",
-      ru: "Парацетамол 500мг",
-      en: "Paracetamol 500mg",
-    },
-    price: 15000,
-    originalPrice: 20000,
-    quantity: 2,
-    image: "/images/products/paracetamol-1.jpg",
-    inStock: true,
-    maxQuantity: 150,
-    prescription: false,
-  },
-  {
-    id: "2",
-    productId: "2",
-    name: {
-      uz: "Vitamin D3 2000 IU",
-      ru: "Витамин D3 2000 МЕ",
-      en: "Vitamin D3 2000 IU",
-    },
-    price: 45000,
-    quantity: 1,
-    image: "/images/products/vitamin-d3-1.jpg",
-    inStock: true,
-    maxQuantity: 80,
-    prescription: false,
-  },
-];
+import EmptyCart from "@/components/cart/EmptyCart";
+import CartItem from "@/components/cart/CartItem";
+import CartSummary from "@/components/cart/CartSummary";
+import DeliveryOptions from "@/components/cart/DeliveryOptions";
+import RecommendedProducts from "@/components/cart/RecommendedProducts";
 
 export default function CartPage() {
+  const { items, removeItem, updateQuantity, totalPrice, totalItems, addItem } =
+    useCart();
   const { locale } = useLanguage();
-  const [cartItems, setCartItems] = useState<CartItem[]>(mockCartItems);
-  const [promoCode, setPromoCode] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState<{
-    code: string;
-    discount: number;
-  } | null>(null);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("uz-UZ").format(price);
+  const content = {
+    title: {
+      ru: "Корзина",
+      uz: "Savatingiz",
+      en: "Your Cart",
+    },
+    items: {
+      ru: "товаров",
+      uz: "mahsulot",
+      en: "items",
+    },
+    selectAll: {
+      ru: "Выбрать все",
+      uz: "Hammasini tanlash",
+      en: "Select All",
+    },
   };
 
-  const updateQuantity = (id: string, newQuantity: number) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: Math.max(1, Math.min(newQuantity, item.maxQuantity)),
-            }
-          : item,
-      ),
-    );
+  // Mock recommended products (8 ta)
+  const recommendedProducts = [
+    {
+      id: "rec-1",
+      name: {
+        ru: "Витамин C 1000mg",
+        uz: "Vitamin C 1000mg",
+        en: "Vitamin C 1000mg",
+      },
+      price: 120000,
+      image: "https://placehold.co/300x300/10B981/white?text=Vitamin+C",
+      rating: 4.8,
+      reviews: 203,
+      bgColor: "bg-emerald-500",
+      features: {
+        ru: ["Укрепляет иммунитет", "Антиоксидант", "1000мг дозировка"],
+        uz: ["Immunitetni mustahkamlaydi", "Antioksidant", "1000mg dozalash"],
+        en: ["Strengthens immunity", "Antioxidant", "1000mg dosage"],
+      },
+      stock: { ru: "В наличии", uz: "Mavjud", en: "In Stock" },
+      articleNumber: "VTC-001",
+    },
+    {
+      id: "rec-2",
+      name: {
+        ru: "Omega-3 Fish Oil",
+        uz: "Omega-3 Baliq yog'i",
+        en: "Omega-3 Fish Oil",
+      },
+      price: 180000,
+      image: "https://placehold.co/300x300/3B82F6/white?text=Omega-3",
+      rating: 4.9,
+      reviews: 167,
+      bgColor: "bg-blue-500",
+      features: {
+        ru: ["Для сердца и мозга", "EPA и DHA", "Очищенное масло"],
+        uz: ["Yurak va miya uchun", "EPA va DHA", "Tozalangan yog'"],
+        en: ["For heart and brain", "EPA and DHA", "Purified oil"],
+      },
+      stock: { ru: "В наличии", uz: "Mavjud", en: "In Stock" },
+      articleNumber: "OMG-002",
+    },
+    {
+      id: "rec-3",
+      name: {
+        ru: "Магний B6",
+        uz: "Magniy B6",
+        en: "Magnesium B6",
+      },
+      price: 95000,
+      image: "https://placehold.co/300x300/8B5CF6/white?text=Magnesium",
+      rating: 4.7,
+      reviews: 145,
+      bgColor: "bg-purple-500",
+      features: {
+        ru: ["Против стресса", "Улучшает сон", "Для нервной системы"],
+        uz: ["Stressga qarshi", "Uyquni yaxshilaydi", "Nerv tizimi uchun"],
+        en: ["Anti-stress", "Improves sleep", "For nervous system"],
+      },
+      stock: { ru: "В наличии", uz: "Mavjud", en: "In Stock" },
+      articleNumber: "MAG-003",
+    },
+    {
+      id: "rec-4",
+      name: {
+        ru: "Мультивитамины",
+        uz: "Multivitaminlar",
+        en: "Multivitamins",
+      },
+      price: 150000,
+      oldPrice: 180000,
+      image: "https://placehold.co/300x300/F59E0B/white?text=Multivitamin",
+      rating: 4.6,
+      reviews: 189,
+      badge: { ru: "Скидка", uz: "Chegirma", en: "Sale" },
+      bgColor: "bg-amber-500",
+      features: {
+        ru: ["Полный комплекс", "30 витаминов", "На месяц"],
+        uz: ["To'liq kompleks", "30 vitamin", "Bir oylik"],
+        en: ["Complete complex", "30 vitamins", "Monthly supply"],
+      },
+      stock: { ru: "В наличии", uz: "Mavjud", en: "In Stock" },
+      articleNumber: "MLT-004",
+    },
+    {
+      id: "rec-5",
+      name: {
+        ru: "Коллаген + гиалуроновая кислота",
+        uz: "Kollagen + gialuronik kislota",
+        en: "Collagen + Hyaluronic Acid",
+      },
+      price: 210000,
+      image: "https://placehold.co/300x300/EC4899/white?text=Collagen",
+      rating: 4.9,
+      reviews: 234,
+      bgColor: "bg-pink-500",
+      features: {
+        ru: ["Для кожи", "Эластичность", "Против морщин"],
+        uz: ["Teri uchun", "Elastiklik", "Ajinlarga qarshi"],
+        en: ["For skin", "Elasticity", "Anti-wrinkle"],
+      },
+      stock: { ru: "В наличии", uz: "Mavjud", en: "In Stock" },
+      articleNumber: "COL-005",
+    },
+    {
+      id: "rec-6",
+      name: {
+        ru: "Витамин D3 5000 МЕ",
+        uz: "Vitamin D3 5000 ME",
+        en: "Vitamin D3 5000 IU",
+      },
+      price: 95000,
+      image: "https://placehold.co/300x300/F97316/white?text=Vitamin+D3",
+      rating: 4.8,
+      reviews: 198,
+      bgColor: "bg-orange-500",
+      features: {
+        ru: ["Для костей", "Поддержка иммунитета", "Высокая дозировка"],
+        uz: ["Suyaklar uchun", "Immunitet qo'llab-quvvatlash", "Yuqori doza"],
+        en: ["For bones", "Immune support", "High dosage"],
+      },
+      stock: { ru: "В наличии", uz: "Mavjud", en: "In Stock" },
+      articleNumber: "VTD-006",
+    },
+    {
+      id: "rec-7",
+      name: {
+        ru: "Цинк + Селен",
+        uz: "Rux + Selen",
+        en: "Zinc + Selenium",
+      },
+      price: 78000,
+      image: "https://placehold.co/300x300/06B6D4/white?text=Zinc",
+      rating: 4.7,
+      reviews: 156,
+      bgColor: "bg-cyan-500",
+      features: {
+        ru: ["Для иммунитета", "Антиоксидант", "Для волос и ногтей"],
+        uz: ["Immunitet uchun", "Antioksidant", "Soch va tirnoq uchun"],
+        en: ["For immunity", "Antioxidant", "For hair and nails"],
+      },
+      stock: { ru: "В наличии", uz: "Mavjud", en: "In Stock" },
+      articleNumber: "ZNC-007",
+    },
+    {
+      id: "rec-8",
+      name: {
+        ru: "Железо + Витамин C",
+        uz: "Temir + Vitamin C",
+        en: "Iron + Vitamin C",
+      },
+      price: 89000,
+      image: "https://placehold.co/300x300/EF4444/white?text=Iron",
+      rating: 4.6,
+      reviews: 134,
+      bgColor: "bg-red-500",
+      features: {
+        ru: ["От анемии", "Повышает энергию", "Легко усваивается"],
+        uz: ["Kamqonlikdan", "Energiyani oshiradi", "Oson o'zlashadi"],
+        en: ["Anti-anemia", "Increases energy", "Easy absorption"],
+      },
+      stock: { ru: "В наличии", uz: "Mavjud", en: "In Stock" },
+      articleNumber: "IRN-008",
+    },
+  ];
+
+  const handleAddRecommended = (product: (typeof recommendedProducts)[0]) => {
+    addItem({
+      id: product.id,
+      name: product.name[locale],
+      price: product.price,
+      quantity: 1,
+      image: product.image,
+    });
   };
 
-  const removeItem = (id: string) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
-  };
+  // Calculate discount
+  const totalDiscount = items.reduce((sum, item) => {
+    return sum + ((item.oldPrice || 0) - item.price) * item.quantity;
+  }, 0);
 
-  const applyPromoCode = () => {
-    if (promoCode === "SALE10") {
-      setAppliedPromo({ code: promoCode, discount: 10 });
-      alert(
-        locale === "uz"
-          ? "Promo kod qo'llandi!"
-          : locale === "ru"
-            ? "Промокод применён!"
-            : "Promo code applied!",
-      );
-    } else {
-      alert(
-        locale === "uz"
-          ? "Noto'g'ri promo kod"
-          : locale === "ru"
-            ? "Неверный промокод"
-            : "Invalid promo code",
-      );
-    }
-  };
-
-  // Calculate totals
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
-  const promoDiscount = appliedPromo
-    ? (subtotal * appliedPromo.discount) / 100
-    : 0;
-  const deliveryFee = subtotal >= 100000 ? 0 : 15000;
-  const total = subtotal - promoDiscount + deliveryFee;
-
-  if (cartItems.length === 0) {
+  // Empty cart state
+  if (items.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-12">
-          <div className="flex min-h-[600px] flex-col items-center justify-center rounded-3xl bg-white p-12 text-center">
-            <div className="mb-6 text-9xl">🛒</div>
-            <h2 className="mb-4 text-3xl font-black text-gray-900">
-              {locale === "uz"
-                ? "Savatchada hech narsa yo'q"
-                : locale === "ru"
-                  ? "Корзина пуста"
-                  : "Cart is empty"}
-            </h2>
-            <p className="mb-8 text-gray-600">
-              {locale === "uz"
-                ? "Mahsulot qo'shishni boshlang"
-                : locale === "ru"
-                  ? "Начните добавлять товары"
-                  : "Start adding products"}
-            </p>
-            <Link
-              href="/products"
-              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 px-8 py-4 font-bold text-white transition-all hover:scale-105 hover:shadow-lg"
-            >
-              <ShoppingBag className="h-5 w-5" />
-              {locale === "uz"
-                ? "Xarid qilish"
-                : locale === "ru"
-                  ? "За покупками"
-                  : "Start Shopping"}
-            </Link>
-          </div>
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-8 lg:px-16">
+          <EmptyCart locale={locale} />
+
+          <RecommendedProducts
+            products={recommendedProducts}
+            onAddToCart={handleAddRecommended}
+            locale={locale}
+          />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-16">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-black text-gray-900">
-            {locale === "uz"
-              ? "Savatcha"
-              : locale === "ru"
-                ? "Корзина"
-                : "Shopping Cart"}
+        <div className="mb-6">
+          <h1 className="text-3xl font-black text-gray-900">
+            {content.title[locale]},{" "}
+            <span className="text-gray-500">
+              {totalItems} {content.items[locale]}
+            </span>
           </h1>
-          <p className="mt-2 text-gray-600">
-            {cartItems.length}{" "}
-            {locale === "uz"
-              ? "ta mahsulot"
-              : locale === "ru"
-                ? "товара(ов)"
-                : "item(s)"}
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Cart Items */}
-          <div className="lg:col-span-2">
-            <div className="space-y-4">
-              {cartItems.map((item) => (
-                <div
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Left - Cart Items */}
+          <div className="space-y-4 lg:col-span-2">
+            {/* Select All Checkbox */}
+            <div className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-6 py-4">
+              <input
+                type="checkbox"
+                id="select-all"
+                className="h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-2 focus:ring-purple-500"
+              />
+              <label
+                htmlFor="select-all"
+                className="cursor-pointer text-sm font-semibold text-gray-900"
+              >
+                {content.selectAll[locale]}
+              </label>
+            </div>
+
+            {/* Delivery Options */}
+            <DeliveryOptions locale={locale} />
+
+            {/* Cart Items */}
+            <div className="space-y-3">
+              {items.map((item) => (
+                <CartItem
                   key={item.id}
-                  className="flex gap-4 rounded-2xl border-2 border-gray-200 bg-white p-6 transition-all hover:border-blue-100 hover:shadow-lg"
-                >
-                  {/* Product Image */}
-                  <Link
-                    href={`/products/${item.productId}`}
-                    className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-gray-50"
-                  >
-                    <div className="flex h-full items-center justify-center text-4xl">
-                      💊
-                    </div>
-                  </Link>
-
-                  {/* Product Info */}
-                  <div className="flex flex-1 flex-col">
-                    <Link
-                      href={`/products/${item.productId}`}
-                      className="mb-2 font-bold text-gray-900 hover:text-blue-600"
-                    >
-                      {item.name[locale]}
-                    </Link>
-
-                    <div className="mb-4 flex items-end gap-2">
-                      <span className="text-xl font-black text-gray-900">
-                        {formatPrice(item.price)}
-                      </span>
-                      <span className="text-sm font-bold text-gray-900">
-                        so'm
-                      </span>
-                      {item.originalPrice && (
-                        <span className="text-sm text-gray-400 line-through">
-                          {formatPrice(item.originalPrice)} so'm
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Quantity Controls */}
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center overflow-hidden rounded-lg border-2 border-gray-200">
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1)
-                          }
-                          disabled={item.quantity <= 1}
-                          className="px-3 py-2 transition-colors hover:bg-gray-100 disabled:opacity-50"
-                        >
-                          <Minus className="h-4 w-4" />
-                        </button>
-                        <span className="px-4 py-2 font-bold">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1)
-                          }
-                          disabled={item.quantity >= item.maxQuantity}
-                          className="px-3 py-2 transition-colors hover:bg-gray-100 disabled:opacity-50"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      </div>
-
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="ml-auto text-red-600 transition-colors hover:text-red-700"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Item Total */}
-                  <div className="flex flex-col items-end justify-between">
-                    <div className="text-right">
-                      <div className="text-xl font-black text-gray-900">
-                        {formatPrice(item.price * item.quantity)}
-                      </div>
-                      <div className="text-sm font-bold text-gray-900">
-                        so'm
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  id={item.id}
+                  name={item.name}
+                  image={item.image}
+                  price={item.price}
+                  quantity={item.quantity}
+                  onUpdateQuantity={updateQuantity}
+                  onRemove={removeItem}
+                  locale={locale}
+                />
               ))}
             </div>
           </div>
 
-          {/* Order Summary */}
+          {/* Right - Order Summary */}
           <div className="lg:col-span-1">
-            <div className="sticky top-8 rounded-2xl border-2 border-gray-200 bg-white p-6">
-              <h3 className="mb-6 text-xl font-bold text-gray-900">
-                {locale === "uz"
-                  ? "Buyurtma"
-                  : locale === "ru"
-                    ? "Заказ"
-                    : "Order Summary"}
-              </h3>
-
-              {/* Promo Code */}
-              <div className="mb-6">
-                <label className="mb-2 block text-sm font-semibold text-gray-700">
-                  {locale === "uz"
-                    ? "Promo kod"
-                    : locale === "ru"
-                      ? "Промокод"
-                      : "Promo code"}
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                    placeholder="SALE10"
-                    className="flex-1 rounded-lg border-2 border-gray-200 px-4 py-2 focus:border-blue-500 focus:outline-none"
-                  />
-                  <button
-                    onClick={applyPromoCode}
-                    className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-blue-700"
-                  >
-                    {locale === "uz"
-                      ? "Qo'llash"
-                      : locale === "ru"
-                        ? "Применить"
-                        : "Apply"}
-                  </button>
-                </div>
-              </div>
-
-              {/* Summary */}
-              <div className="space-y-3 border-t-2 border-gray-200 pt-6">
-                <div className="flex justify-between text-gray-600">
-                  <span>
-                    {locale === "uz"
-                      ? "Mahsulotlar"
-                      : locale === "ru"
-                        ? "Товары"
-                        : "Subtotal"}
-                  </span>
-                  <span className="font-semibold">
-                    {formatPrice(subtotal)} so'm
-                  </span>
-                </div>
-
-                {appliedPromo && (
-                  <div className="flex justify-between text-green-600">
-                    <span>
-                      {locale === "uz"
-                        ? "Chegirma"
-                        : locale === "ru"
-                          ? "Скидка"
-                          : "Discount"}{" "}
-                      ({appliedPromo.code})
-                    </span>
-                    <span className="font-semibold">
-                      -{formatPrice(promoDiscount)} so'm
-                    </span>
-                  </div>
-                )}
-
-                <div className="flex justify-between text-gray-600">
-                  <span>
-                    {locale === "uz"
-                      ? "Yetkazib berish"
-                      : locale === "ru"
-                        ? "Доставка"
-                        : "Delivery"}
-                  </span>
-                  <span className="font-semibold">
-                    {deliveryFee === 0 ? (
-                      <span className="text-green-600">
-                        {locale === "uz"
-                          ? "Bepul"
-                          : locale === "ru"
-                            ? "Бесплатно"
-                            : "Free"}
-                      </span>
-                    ) : (
-                      `${formatPrice(deliveryFee)} so'm`
-                    )}
-                  </span>
-                </div>
-
-                <div className="flex justify-between border-t-2 border-gray-200 pt-3 text-xl font-black text-gray-900">
-                  <span>
-                    {locale === "uz"
-                      ? "Jami"
-                      : locale === "ru"
-                        ? "Итого"
-                        : "Total"}
-                  </span>
-                  <span>{formatPrice(total)} so'm</span>
-                </div>
-              </div>
-
-              {/* Checkout Button */}
-              <Link
-                href="/checkout"
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 py-4 font-bold text-white transition-all hover:scale-[1.02] hover:shadow-lg"
-              >
-                {locale === "uz"
-                  ? "Rasmiylashtirish"
-                  : locale === "ru"
-                    ? "Оформить заказ"
-                    : "Proceed to Checkout"}
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-
-              {/* Free Delivery Notice */}
-              {subtotal < 100000 && (
-                <p className="mt-4 text-center text-sm text-gray-600">
-                  {locale === "uz"
-                    ? `Bepul yetkazish uchun yana ${formatPrice(
-                        100000 - subtotal,
-                      )} so'm qo'shing`
-                    : locale === "ru"
-                      ? `Добавьте еще ${formatPrice(
-                          100000 - subtotal,
-                        )} сум для бесплатной доставки`
-                      : `Add ${formatPrice(
-                          100000 - subtotal,
-                        )} sum more for free delivery`}
-                </p>
-              )}
-            </div>
+            <CartSummary
+              totalItems={totalItems}
+              totalPrice={totalPrice}
+              totalDiscount={totalDiscount}
+              locale={locale}
+            />
           </div>
         </div>
+
+        {/* Recommended Products */}
+        <RecommendedProducts
+          products={recommendedProducts}
+          onAddToCart={handleAddRecommended}
+          locale={locale}
+        />
       </div>
     </div>
   );
