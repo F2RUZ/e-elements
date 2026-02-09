@@ -62,19 +62,24 @@ export default function ProductGrid({
           id={product.id}
           name={product.name}
           price={product.price}
-          // 1. BU YERNI O'ZGARTIRING: product.image -> product.images[0]
+          oldPrice={product.originalPrice}
           image={product.images[0]}
           rating={product.rating}
-          // 2. BU YERNI HAM TEKSHIRING: product.reviews -> product.reviewCount
           reviews={product.reviewCount}
-          // 3. BADGE: Agar product.badge xato bersa, product.isNew yoki boshqasini ishlating
-          badge={product.isNew ? "New" : ""}
-          description={product.description}
-          // 4. FEATURES: product.features mavjud bo'lmasa, uni olib tashlang yoki [] bering
-          features={[]}
-          // 5. STOCK: product.stock -> product.stockCount
-          stock={product.stockCount}
-          articleNumber={product.id} // yoki boshqa mos maydon
+          badge={
+            product.isNew
+              ? { ru: "Новинка", uz: "Yangi", en: "New" }
+              : product.bestseller
+                ? { ru: "Хит продаж", uz: "Top mahsulot", en: "Bestseller" }
+                : undefined
+          }
+          description={product.shortDescription}
+          stock={
+            product.stockCount > 0
+              ? { ru: "В наличии", uz: "Mavjud", en: "In Stock" }
+              : undefined
+          }
+          articleNumber={product.id}
           bgColor={categoryColors[product.categorySlug] || "bg-purple-500"}
           locale={locale}
           onAddToCart={() => onAddToCart?.(product)}
