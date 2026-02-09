@@ -25,6 +25,7 @@ export interface Cart {
   promoDiscount?: number;
   deliveryFee: number;
   total: number;
+  oldPrice?: number; // 👈 MUHIM
 }
 
 export interface PromoCode {

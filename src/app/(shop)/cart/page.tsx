@@ -295,7 +295,15 @@ export default function CartPage() {
         {/* Recommended Products */}
         <RecommendedProducts
           products={recommendedProducts}
-          onAddToCart={handleAddRecommended}
+          onAddToCart={(product) =>
+            addItem({
+              id: product.id,
+              name: product.name[locale],
+              price: product.price,
+              quantity: 1,
+              image: product.image,
+            })
+          }
           locale={locale}
         />
       </div>

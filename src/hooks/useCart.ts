@@ -8,6 +8,7 @@ interface CartItem {
   price: number;
   quantity: number;
   image: string;
+  oldPrice?: number; // 👈 MUHIM
 }
 
 export function useCart() {

@@ -115,10 +115,7 @@ export default function ProductCard({
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
-    onAddToCart();
-
-    // Show snackbar
+    onAddToCart(); // tipga mos, hech qanday argument yo‘q
     setShowSnackbar({
       type: "cart",
       message: snackbarMessages.cart[locale],

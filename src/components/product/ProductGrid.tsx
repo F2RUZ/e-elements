@@ -59,10 +59,25 @@ export default function ProductGrid({
       {products.map((product) => (
         <ProductCard
           key={product.id}
-          product={product}
-          onAddToCart={onAddToCart}
-          onAddToWishlist={onAddToWishlist}
+          id={product.id}
+          name={product.name}
+          price={product.price}
+          // 1. BU YERNI O'ZGARTIRING: product.image -> product.images[0]
+          image={product.images[0]}
+          rating={product.rating}
+          // 2. BU YERNI HAM TEKSHIRING: product.reviews -> product.reviewCount
+          reviews={product.reviewCount}
+          // 3. BADGE: Agar product.badge xato bersa, product.isNew yoki boshqasini ishlating
+          badge={product.isNew ? "New" : ""}
+          description={product.description}
+          // 4. FEATURES: product.features mavjud bo'lmasa, uni olib tashlang yoki [] bering
+          features={[]}
+          // 5. STOCK: product.stock -> product.stockCount
+          stock={product.stockCount}
+          articleNumber={product.id} // yoki boshqa mos maydon
           bgColor={categoryColors[product.categorySlug] || "bg-purple-500"}
+          locale={locale}
+          onAddToCart={() => onAddToCart?.(product)}
         />
       ))}
     </div>
